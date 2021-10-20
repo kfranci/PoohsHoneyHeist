@@ -3,10 +3,10 @@ var height = 600;
 var xPos=50;
 var yPos=240;
 var playerSize=75;
-var playerSpeed=15;
+var playerSpeed=20;
 var bees=[];
-var beeSize=50;
-var beeSpeed=10;
+var beeSize=75;
+var beeSpeed=8;
 var honey=[];
 var shotSize=30;
 var shotSpeed=10;
@@ -24,6 +24,8 @@ img3.src = 'images/honey.png';
 img4.src = 'images/back.jpg';
 var lives = 3;
 var score = 0;
+
+//button press codes
 var space = 32;
 var up = 38;
 var down = 40;
@@ -43,14 +45,18 @@ function init() {
 window.onload = init();
 
 function createBee() {
-	bees.push({x:canvas.width,y:Math.random()*canvas.height});
+	bees.push({x:canvas.width,y:Math.random()*(bufferBottom - bufferTop) + bufferTop});
 }
-function update() {
+function dispStats(){
 	context.drawImage(img4, 0,0,canvas.width,canvas.height);
 	context.fillStyle = "purple";
 	context.font = "30px Arial";
 	context.fillText("Lives: " + lives, width - bufferTop*5, bufferBottom);
 	context.fillText("Score: " + score, width-bufferTop*5, bufferTop);
+}
+
+function update() {
+	dispStats();
 	context.drawImage(img,xPos-playerSize/2,yPos-playerSize/2,playerSize,playerSize);
 	for(var i=0;i<honey.length;i++) {
 		honey[i].x += shotSpeed;
@@ -85,6 +91,14 @@ function update() {
 			}
 			break;
 		}
+		else if( bees[k].x == 0 ){
+			score -= 10;
+			if(score < 0){
+				endGame();
+				clear();
+				break;
+			}
+		}
 	}
 }
 
@@ -115,12 +129,13 @@ function clear() {
 }
 
 function endGame(){
+	dispStats();
 	canvas=document.getElementById("canvas");
 	context=canvas.getContext("2d");
 	context.drawImage(img4, 0,0, canvas.wdith, canvas.height);
 	context.fillStyle = "purple";
 	context.font = "30px Arial";
-	context.fillText("No Lives Left! You Lose! Refresh to play again!", width/2 - bufferTop*8, height/2);  
+	context.fillText("You Lose! Refresh to play again!", width/2 - bufferTop*8, height/2);  
 }
 
 	
