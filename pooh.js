@@ -39,7 +39,7 @@ var bufferBottom = height-75/2;
 var lives = 3;
 var score = 0;
 
-//button press codes
+// button press codes
 var spaceCooldown = 0;
 var space = 32;
 var up = 38;
