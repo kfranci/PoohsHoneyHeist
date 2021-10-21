@@ -26,6 +26,7 @@ var lives = 3;
 var score = 0;
 
 //button press codes
+var spaceCooldown = 0;
 var space = 32;
 var up = 38;
 var down = 40;
@@ -33,6 +34,7 @@ var timeoutTime = 5000;
 var initOne = setInterval(update,updateTime);
 var initTwo = setInterval(createBee,time);   
 document.addEventListener('keydown',keyPush);
+document.addEventListener('keyup', refreshSpace);
 
 
 function init() {
@@ -106,7 +108,10 @@ function update() {
 function keyPush(e) {
 	switch(e.keyCode) {
 		case space:
-			honey.push({x:xPos,y:yPos});
+			if(spaceCooldown == 0){
+				honey.push({x:xPos,y:yPos});
+				spaceCooldown = 1;
+			}
 			break;
 		case up:
 			if(yPos-playerSpeed <= bufferTop){
@@ -136,6 +141,10 @@ function endGame(){
 	context.fillStyle = "purple";
 	context.font = "30px Arial";
 	context.fillText("You Lose! Refresh to play again!", width/2 - bufferTop*8, height/2);  
+}
+
+function refreshSpace(){
+	spaceCooldown = 0;
 }
 
 	
