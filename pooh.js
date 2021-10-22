@@ -54,7 +54,6 @@ document.addEventListener('keyup', refreshSpace);
 
 // get the elements that will be needed for the game
 function init() {
-
 	canvas=document.getElementById("canvas");
 	context=canvas.getContext("2d");
 }
@@ -85,65 +84,10 @@ function update() {
 	context.drawImage(img,xPos-playerSize/2,yPos-playerSize/2,playerSize,playerSize);
 
 	// move the honey across the screen when needed
-	for(var i=0;i<honey.length;i++) {
-		honey[i].x += shotSpeed;
-		// draw honey
-		context.drawImage(img3, honey[i].x-shotSize/2,honey[i].y-shotSize/2,shotSize,shotSize);
+    checkHoney();
 
-		// this loop is used to check for collisions when bees and honey interact
-		for(var j=bees.length-1;j>=0;j--) {
-			var dx=Math.abs(bees[j].x-honey[i].x);
-			var dy=Math.abs(bees[j].y-honey[i].y);
-			var dist=Math.sqrt(dx*dx+dy*dy);
-			if(dist < (shotSize+beeSize)/2) {
-				bees.splice(j,1);
-				honey.splice(i,1);     
-				score += 10;
-			}
-		}
-	}   
-
-	// this loop here checks for if a bee hits a player  
-	for(var k=0;k<bees.length;k++) {
-		bees[k].x -= beeSpeed;
-		// draw bee
-		context.drawImage(img2, bees[k].x-beeSize/2,bees[k].y-beeSize/2,beeSize,beeSize);
-		var dx=Math.abs(bees[k].x-xPos);
-		var dy=Math.abs(bees[k].y-yPos);
-		var dist=Math.sqrt(dx*dx+dy*dy);
-		// check for collision
-		if(dist < (playerSize+beeSize)/2) {
-			honey=[];
-			bees=[];
-			xPos = 50;
-			yPos = 240;
-			lives--;
-			// check to see if player has no more lives
-			if(lives == 0){
-				endGame();
-				clear();
-				break;
-			}
-			break;
-		}
-		// subtarct score if bee gets passed pooh
-		else if( bees[k].x == 0 ){
-			score -= 10;
-			if(score < 0){
-				honey=[];
-				bees=[];
-				xPos = 50;
-				yPos = 240;
-				lives--;
-				score = 0;
-				if(lives == 0){
-					endGame();
-					clear();
-					break;
-				}
-			}
-		}
-	}
+	// check bees and player for collisions and scores 
+	checkBeesAndPlayer();
 }
 
 // logic for key presses and what shoulf happen
@@ -190,4 +134,77 @@ function endGame(){
 // cooldown so space cannot be held down
 function refreshSpace(){
 	spaceCooldown = 0;
+}
+
+// fucntion to see if honey needs to be drawn or if it hits a bee
+function checkHoney(){
+		for(var i=0;i<honey.length;i++) {
+		honey[i].x += shotSpeed;
+		// draw honey
+		context.drawImage(img3, honey[i].x-shotSize/2,honey[i].y-shotSize/2,shotSize,shotSize);
+
+		// this loop is used to check for collisions when bees and honey interact
+		for(var j=bees.length-1;j>=0;j--) {
+			var checkX=Math.abs(bees[j].x-honey[i].x);
+			var checkY=Math.abs(bees[j].y-honey[i].y);
+			var getXDist = checkX*checkX;
+			var getYDist = checkY*checkY;
+			var dist=Math.sqrt(getXDist+getYDist);
+			if(dist < (shotSize+beeSize)/2) {
+				bees.splice(j,1);
+				honey.splice(i,1);     
+				score += 10;
+			}
+		}
+	}
+}
+
+// function to check if bees hit player and the status of the player
+function checkBeesAndPlayer(){
+		for(var k=0;k<bees.length;k++) {
+			bees[k].x -= beeSpeed;
+			// draw bee
+			context.drawImage(img2, bees[k].x-beeSize/2,bees[k].y-beeSize/2,beeSize,beeSize);
+			var checkX=Math.abs(bees[k].x-xPos);
+			var checkY=Math.abs(bees[k].y-yPos);
+			var getXDist = checkX*checkX;
+			var getYDist = checkY*checkY;
+			var dist=Math.sqrt(getXDist+getYDist);
+			// check for collision
+			if(dist < (playerSize+beeSize)/2) {
+				honey=[];
+				bees=[];
+	   
+				// reset player
+				xPos = 50;
+				yPos = 240;
+				lives--;
+				// check to see if player has no more lives
+				if(lives == 0){
+					endGame();
+					clear();
+					break;
+				}
+				break;
+			}
+			// subtarct score if bee gets passed pooh
+			else if( bees[k].x == 0 ){
+				score -= 10;
+				if(score < 0){
+					honey=[];
+					bees=[];
+
+					// reset player
+					xPos = 50;
+					yPos = 240;
+					lives--;
+					score = 0;
+					if(lives == 0){
+						endGame();
+						clear();
+						break;
+					}
+				}
+			}
+		}
 }
